@@ -1,4 +1,4 @@
-using EffectiveMobileTestTask.Configs;
+using EMTestTask.Configs;
 using EMTestTask.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
@@ -29,7 +29,11 @@ namespace EMTestTask
             });
 
 
-            // Add services to the container.
+            // Add StatisticBot
+            builder.Services.Configure<StatisticBotSetting>(builder.Configuration.GetSection("StatisticBot"));
+            builder.Services.AddScoped<StatisticBotService>();
+
+            // Main task
             builder.Services.Configure<AdvertisingSetting>(builder.Configuration.GetSection("AdvertisingSetting"));
             builder.Services.AddSingleton<IAdvertisingService, AdvertisingService>();
 

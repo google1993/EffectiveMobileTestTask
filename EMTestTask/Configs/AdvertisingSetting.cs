@@ -1,4 +1,4 @@
-﻿namespace EffectiveMobileTestTask.Configs
+﻿namespace EMTestTask.Configs
 {
     public class AdvertisingSetting
     {

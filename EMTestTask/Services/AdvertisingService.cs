@@ -1,26 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Http;
 using System;
-using System.Net.Http.Json;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
-using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Text;
-using EffectiveMobileTestTask.Configs;
-using YamlDotNet.Serialization;
+using EMTestTask.Configs;
+using EMTestTask.Models;
 
 namespace EMTestTask.Services
 {
     public interface IAdvertisingService
     {
-        void LoadFromFile(Stream fileStream);
+        AdvertisingServiceUpload LoadFromFile(Stream fileStream);
         IEnumerable<string> FindSites(string location);
-        void Reset();
+        AdvertisingServiceUpload Reset();
     }
 
     public class AdvertisingService : IAdvertisingService
@@ -41,17 +35,31 @@ namespace EMTestTask.Services
             Reset();
         }
 
-        public void LoadFromFile(Stream fileStream)
+        public AdvertisingServiceUpload LoadFromFile(Stream fileStream)
         {
+            var result = new AdvertisingServiceUpload();
+
             var newIndex = new Dictionary<string, HashSet<string>>();
-            using (var reader = new StreamReader(fileStream))
+
+            try
             {
+                using var reader = new StreamReader(fileStream);
+
                 string? line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    result.LinesTotal++;
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        result.LinesErrorNums.Add(result.LinesTotal);
+                        continue;
+                    }
                     var parts = line.Split(':', 2);
-                    if (parts.Length < 2) continue;
+                    if (parts.Length < 2)
+                    {
+                        result.LinesErrorNums.Add(result.LinesTotal);
+                        continue;
+                    }
 
                     var siteName = parts[0].Trim();
                     var locations = parts[1].Split(',')
@@ -73,7 +81,13 @@ namespace EMTestTask.Services
                     }
                 }
             }
+            catch (Exception e)
+            {
+                result.Result = -1;
+                result.Message = $"{e.Message} | {e.StackTrace}";
+            }
             _locationIndex = newIndex;
+            return result;
         }
 
         public IEnumerable<string> FindSites(string location)
@@ -111,18 +125,20 @@ namespace EMTestTask.Services
             return prefixes;
         }
 
-        public void Reset()
+        public AdvertisingServiceUpload Reset()
         {
+            var result = new AdvertisingServiceUpload();
             try
             {
                 using var fileStream = new FileStream(_settings.MapFile, FileMode.Open, FileAccess.Read);
-                LoadFromFile(fileStream);
+                result = LoadFromFile(fileStream);
             }
             catch (Exception e)
             {
                 string errMsg = (e.Message ?? "No message") + "\n" + (e.StackTrace ?? "No stack trace");
                 _log.LogWarning("{Msg}", errMsg);
             }
+            return result;
         }
     }
 }
