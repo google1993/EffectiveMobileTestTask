@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Client</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .result {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Работа с API</h1>
+
+  <h2>Загрузка файла</h2>
+  <input type="file" id="fileInput" />
+  <button id="uploadButton">Загрузить файл</button>
+
+  <h2>Сброс данных</h2>
+  <button id="resetButton">Сбросить данные</button>
+
+  <h2>Поиск по локации</h2>
+  <input type="text" id="locationInput" placeholder="Введите локацию" />
+  <button id="searchButton">Поиск</button>
+
+  <div class="result" id="resultContainer"></div>
+  <div class="error" id="errorContainer"></div>
+
+  <script>
+    const apiUrl = 'https://khatuncev.ru/demo3/api';
+
+    document.getElementById('uploadButton').addEventListener('click', async () => {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+
+        try {
+            const response = await fetch(`${apiUrl}/adv/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            displayResult(result);
+        } catch (error) {
+            displayError(error.message);
+        }
+    });
+
+    document.getElementById('resetButton').addEventListener('click', async () => {
+        try {
+            const response = await fetch(`${apiUrl}/adv/reset`, {
+                method: 'GET'
+            });
+            const result = await response.json();
+            displayResult(result);
+        } catch (error) {
+            displayError(error.message);
+        }
+    });
+
+    document.getElementById('searchButton').addEventListener('click', async () => {
+        const location = document.getElementById('locationInput').value;
+        try {
+            const response = await fetch(`${apiUrl}/adv/search?location=${encodeURIComponent(location)}`, {
+                method: 'GET'
+            });
+            const result = await response.json();
+            displayResult(result);
+        } catch (error) {
+            displayError(error.message);
+        }
+    });
+
+    function displayResult(result) {
+        const resultContainer = document.getElementById('resultContainer');
+        resultContainer.innerHTML = JSON.stringify(result, null, 2);
+        document.getElementById('errorContainer').innerHTML = '';
+    }
+
+    function displayError(message) {
+        const errorContainer = document.getElementById('errorContainer');
+        errorContainer.innerHTML = message;
+        document.getElementById('resultContainer').innerHTML = '';
+    }
+  </script>
+
+</body>
+</html>

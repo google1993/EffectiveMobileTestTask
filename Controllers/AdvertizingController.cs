@@ -12,7 +12,7 @@ using System.Text;
 namespace ServerAPI.Controllers
 {
     [ApiController]
-    [Route("api/adv")]
+    [Route("adv")]
     public class AdvertizingController(
         ILogger<AdvertizingController> log,
         IAdvertisingService advService
@@ -31,7 +31,7 @@ namespace ServerAPI.Controllers
             {
                 _advService.LoadFromFile(stream);
             }
-            return Ok();
+            return Ok(new { Result = 0 });
         }
 
         [HttpGet("search")]
@@ -48,7 +48,7 @@ namespace ServerAPI.Controllers
         public IActionResult Reset()
         {
             _advService.Reset();
-            return Ok();
+            return Ok(new { Result = 0 });
         }
     }
 }

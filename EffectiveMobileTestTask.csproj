@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="map.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
