@@ -45,10 +45,10 @@ namespace UnitTests
         {
             _advertisingService.Reset();
 
-            var sites = _advertisingService.FindSites("/ru/msk");
+            var sites = _advertisingService.FindAgents("/ru/msk");
             Assert.Equal(2, sites.Count());
-            Assert.Contains("Газета уральских москвичей", sites);
-            Assert.Contains("Яндекс.Директ", sites);
+            Assert.Contains("Р“Р°Р·РµС‚Р° СѓСЂР°Р»СЊСЃРєРёС… РјРѕСЃРєРІРёС‡РµР№", sites);
+            Assert.Contains("РЇРЅРґРµРєСЃ.Р”РёСЂРµРєС‚", sites);
         }
 
         [Fact]
@@ -56,10 +56,10 @@ namespace UnitTests
         {
             _advertisingService.Reset();
 
-            var sites = _advertisingService.FindSites("/ru/svrd");
+            var sites = _advertisingService.FindAgents("/ru/svrd");
             Assert.Equal(2, sites.Count());
-            Assert.Contains("Крутая реклама", sites);
-            Assert.Contains("Яндекс.Директ", sites);
+            Assert.Contains("РљСЂСѓС‚Р°СЏ СЂРµРєР»Р°РјР°", sites);
+            Assert.Contains("РЇРЅРґРµРєСЃ.Р”РёСЂРµРєС‚", sites);
         }
 
         [Fact]
@@ -67,11 +67,11 @@ namespace UnitTests
         {
             _advertisingService.Reset();
 
-            var sites = _advertisingService.FindSites("/ru/svrd/revda");
+            var sites = _advertisingService.FindAgents("/ru/svrd/revda");
             Assert.Equal(3, sites.Count());
-            Assert.Contains("Крутая реклама", sites);
-            Assert.Contains("Яндекс.Директ", sites);
-            Assert.Contains("Ревдинский рабочий", sites);
+            Assert.Contains("РљСЂСѓС‚Р°СЏ СЂРµРєР»Р°РјР°", sites);
+            Assert.Contains("РЇРЅРґРµРєСЃ.Р”РёСЂРµРєС‚", sites);
+            Assert.Contains("Р РµРІРґРёРЅСЃРєРёР№ СЂР°Р±РѕС‡РёР№", sites);
         }
 
         [Fact]
@@ -79,9 +79,9 @@ namespace UnitTests
         {
             _advertisingService.Reset();
 
-            var sites = _advertisingService.FindSites("/ru");
+            var sites = _advertisingService.FindAgents("/ru");
             Assert.Single(sites);
-            Assert.Contains("Яндекс.Директ", sites);
+            Assert.Contains("РЇРЅРґРµРєСЃ.Р”РёСЂРµРєС‚", sites);
         }
 
 

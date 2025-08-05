@@ -23,9 +23,12 @@ namespace EffectiveMobileTestTask.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
+            _log.LogInformation("Upload File: {}", file.FileName);
+
             var result = new AdvertisingServiceUpload();
             if (file == null || file.Length == 0)
             {
+                _log.LogWarning("Upload File: File is not provided or empty");
                 result.Result = -1;
                 result.Message = "File is not provided or empty";
                 _ = Task.Run(() => _statisticBotService.UploadFile(result));
@@ -33,6 +36,7 @@ namespace EffectiveMobileTestTask.Controllers
             }
             try
             {
+                _log.LogInformation("Upload File: {}", file.FileName);
                 using (var stream = file.OpenReadStream())
                 {
                     result = _advService.LoadFromFile(stream);
@@ -42,6 +46,7 @@ namespace EffectiveMobileTestTask.Controllers
             {
                 result.Result = -1;
                 result.Message = (e.Message ?? "No message") + "\n" + (e.StackTrace ?? "No stack trace");
+                _log.LogWarning("Can't correct upload file: {}", result.Message);
             }
             _ = Task.Run(() => _statisticBotService.UploadFile(result));
             return Ok(new { result });
@@ -52,10 +57,12 @@ namespace EffectiveMobileTestTask.Controllers
         {
             if (string.IsNullOrEmpty(location))
             {
+                _log.LogWarning("Search: Location is required");
                 _ = Task.Run(() => _statisticBotService.Search("", []));
                 return Ok(new { Result = -1, Message = "Location is required" });
             }
-            var sites = _advService.FindSites(location);
+            _log.LogInformation("Search: {}", location);
+            var sites = _advService.FindAgents(location);
             _ = Task.Run(() => _statisticBotService.Search(location, sites));
             return Ok(new { Result = 0, Sites = sites });
         }
